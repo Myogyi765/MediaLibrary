@@ -33,9 +33,7 @@ class BorrowRepository extends BaseRepository implements BorrowRepositoryInterfa
         return Borrow::fromArray($row);
     }
 
-
-
-  public function findByUserId(int $userId)
+public function findByUserId(int $userId)
 {
     $stmt = $this->db->prepare("
         SELECT
@@ -44,17 +42,32 @@ class BorrowRepository extends BaseRepository implements BorrowRepositoryInterfa
             b.media_id,
             b.borrow_date,
             b.return_date,
-            b.status,
-            m.title
+            b.status AS status,
+            m.title,
+
+            p.payment_id,
+            p.status AS payment_status
+
         FROM borrows b
         JOIN media m ON m.media_id = b.media_id
+        LEFT JOIN payments p ON p.borrow_id = b.borrow_id
         WHERE b.user_id = ?
         ORDER BY b.borrow_id DESC
     ");
 
     $stmt->execute([$userId]);
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Convert into structured format for your view
+    foreach ($rows as &$row) {
+        $row['payment'] = [
+            'payment_id' => $row['payment_id'] ?? null,
+            'status'     => $row['payment_status'] ?? null
+        ];
+    }
+
+    return $rows;
 }
 
     public function findActiveBorrows(int $userId)

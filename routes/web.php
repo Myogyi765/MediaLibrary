@@ -1,5 +1,8 @@
 <?php
 
+use App\DB\Database;
+
+/* ================= CONTROLLERS ================= */
 use App\Catalog\Presentation\Controller\CatalogController;
 use App\Catalog\Presentation\Controller\DetailsController;
 use App\Catalog\Presentation\Controller\SuggestController;
@@ -9,33 +12,53 @@ use App\User\Infrastructure\Persistence\UserRepository;
 
 use App\Admin\Presentation\Controller\AdminUserController;
 use App\Admin\Presentation\Controller\AdminReservationController;
-use App\Admin\Presentation\Controller\AdminPaymentController;
 
 use App\Borrow\Presentation\Controller\BorrowController;
+
+use App\Payment\Presentation\Controller\PaymentController;
+use App\Payment\Application\Service\PaymentService;
+use App\Payment\Infrastructure\Persistence\PaymentRepository;
+
+/* ================= SERVICES ================= */
 use App\Borrow\Domain\Service\BorrowService;
 use App\Borrow\Infrastructure\Persistence\BorrowRepository;
 
+/* ================= REQUEST ================= */
 use App\User\Presentation\Request\LoginRequest;
 use App\User\Presentation\Request\RegisterUserRequest;
 use App\User\Presentation\Validate\Validator;
+use App\Payment\Domain\Repository\PaymentRepositoryInterface;
+ use App\Application\Service\FormatService;
+ use App\Admin\Presentation\Controller\AdminPaymentController;
 
-use App\DB\Database;
+ use App\Admin\Presentation\Controller\AdminNotificationController;
 
-$page = $_GET['page'] ?? 'home';
-
-/* =========================
-   GLOBAL DB + SERVICES
-========================= */
+/* ================= DB ================= */
 
 $db = Database::getConnection();
 
-/* Borrow System (IMPORTANT: only once) */
-$borrowRepo = new BorrowRepository($db);
-$borrowService = new BorrowService($borrowRepo);
+/* ================= REPOSITORIES ================= */
+
+$borrowRepo  = new BorrowRepository($db);
+$paymentRepo = new PaymentRepository($db);
+$userRepo    = new UserRepository($db);
+
+/* ⚠️ ADD MISSING SERVICES */
+$catalogRepo = new \App\Catalog\Infrastructure\Persistence\CatalogRepository($db);
+$catalogService = new \App\Catalog\Domain\Service\CatalogService($catalogRepo);
+
+$userService = new \App\User\Domain\Service\UserService($userRepo);
+
+/* ================= SERVICES ================= */
+
+$borrowService  = new BorrowService($borrowRepo, $paymentRepo);
+$paymentService = new PaymentService($paymentRepo);
+
+$page = $_GET['page'] ?? 'home';
+
+/* ================= ROUTER ================= */
 
 switch ($page) {
-
-    /* ================= CATALOG ================= */
 
     case 'catalog':
         $controller = new CatalogController($catalogService);
@@ -43,47 +66,62 @@ switch ($page) {
         break;
 
     case 'details':
-        $controller = new DetailsController($catalogService);
+        $controller = new DetailsController(
+            $catalogService,
+            $borrowRepo,
+            $paymentRepo
+        );
         $controller->show();
         break;
 
     case 'suggest':
-        $controller = new SuggestController($formatService);
+        $controller = new SuggestController($formatService ?? null);
         $controller->index();
         break;
 
-    /* ================= AUTH ================= */
-
     case 'login':
-        require_once BASE_PATH . '/App/User/Presentation/Controller/AuthController.php';
         $controller = new AuthController($userService);
         $controller->login(new LoginRequest(), new Validator());
         break;
 
     case 'register':
-        require_once BASE_PATH . '/App/User/Presentation/Controller/AuthController.php';
         $controller = new AuthController($userService);
         $controller->register(new RegisterUserRequest(), new Validator());
         break;
 
     case 'logout':
-        require_once BASE_PATH . '/App/User/Presentation/Controller/AuthController.php';
         $controller = new AuthController($userService);
         $controller->logout();
         break;
 
-    /* ================= ADMIN ================= */
 
-    case 'admin-dashboard':
-        $pageTitle = 'Admin Dashboard';
-        $section = 'admin-dashboard';
-        require BASE_PATH . '/View/admin-dashboard.php';
+
+
+        case 'mark-read':
+        if (!isset($_SESSION['user'])) {
+            header('Location: ?page=login');
+            exit;
+        }
+        
+        $notificationId = (int)($_GET['id'] ?? 0);
+        if ($notificationId > 0) {
+            require_once BASE_PATH . '/App/Notification/Model/NotificationModel.php';
+            $notifModel = new NotificationModel($db); 
+            $notifModel->markAsRead($notificationId);
+        }
+        
+        // Smoothly return back where the user clicked it
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? '?page=catalog'));
+        exit;
         break;
 
-    case 'admin-users':
-        $db = Database::getConnection();
-        $userRepo = new UserRepository($db);
+        case 'admin-dashboard':
+    $pageTitle = 'Admin Dashboard';
+    $section = 'admin-dashboard';
 
+    require BASE_PATH . '/view/admin-dashboard.php';
+    break;
+    case 'admin-users':
         $controller = new AdminUserController($userRepo);
         $controller->index();
         break;
@@ -92,7 +130,6 @@ switch ($page) {
         $controller = new AdminReservationController();
         $controller->index();
         break;
-
 
 
     case 'approve-borrow':
@@ -105,8 +142,6 @@ switch ($page) {
         $controller->reject((int)$_GET['id']);
         break;
 
-    /* ================= BORROW ================= */
-
     case 'borrow':
         $controller = new BorrowController($borrowService);
         $controller->borrow();
@@ -114,7 +149,7 @@ switch ($page) {
 
     case 'return-book':
         $controller = new BorrowController($borrowService);
-        $controller->return();
+        $controller->returnBook();
         break;
 
     case 'my-borrows':
@@ -122,9 +157,44 @@ switch ($page) {
         $controller->myBorrows();
         break;
 
-    /* ================= DEFAULT ================= */
+    case 'payment':
+        $controller = new PaymentController($paymentService);
+        $controller->show();
+        break;
 
+        case 'admin-payments':
+    $controller = new AdminPaymentController($paymentRepo);
+    $controller->index();
+    break;
+
+    case 'pay-process':
+    $controller = new PaymentController($paymentService);
+    $controller->process();
+    break;
+
+    case 'upload-proof':
+    $controller = new PaymentController($paymentService);
+    $controller->uploadProof();
+    break;
+    case 'invoice':
+    $controller = new PaymentController($paymentService);
+    $controller->invoice(); // Shows invoice page
+    break;
+
+    case 'approve-payment':
+    $controller = new AdminPaymentController($paymentRepo);
+    $controller->approve((int)$_GET['id']);
+    break;
+
+
+    // Put this near your other 'admin-' router switch blocks
+    case 'admin-notifications':
+        $controller = new AdminNotificationController($db);
+        $controller->index();
+        break;
+        
     default:
         $controller = new CatalogController($catalogService);
         $controller->home();
+        break;
 }

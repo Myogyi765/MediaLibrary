@@ -2,52 +2,31 @@
 
 namespace App\Admin\Presentation\Controller;
 
+use App\Payment\Infrastructure\Persistence\PaymentRepository;
+
 class AdminPaymentController
 {
+    public function __construct(
+        private PaymentRepository $paymentRepo
+    ) {}
+
     public function index()
     {
+        $payments = $this->paymentRepo->findAllWithBorrow();
 
-        $payments = [];
+        $pageTitle = "Admin Payments";
+        $section = "admin-payments";
 
-        require BASE_PATH . '/App/Admin/Presentation/View/payments.php';
+       require BASE_PATH . '/App/Admin/Presentation/view/admin-payments.php';
     }
 
-    public function create()
-    {
-        require BASE_PATH . '/App/Admin/Presentation/View/payments-create.php';
-    }
+    public function approve(int $paymentId)
+{
+    // Mark payment as paid
+    $this->paymentRepo->approve($paymentId);
 
-    public function store()
-    {
-      
-        header('Location: /Public/index.php?page=admin-payments');
-        exit;
-    }
-
-    public function edit()
-    {
-        $id = $_GET['id'] ?? null;
-
-        $payment = []; // fetch from DB later
-
-        require BASE_PATH . '/App/Admin/Presentation/View/payments-edit.php';
-    }
-
-    public function update()
-    {
-       
-
-        header('Location: /Public/index.php?page=admin-payments');
-        exit;
-    }
-
-    public function delete()
-    {
-        $id = $_POST['id'] ?? null;
-
-     
-
-        header('Location: /Public/index.php?page=admin-payments');
-        exit;
-    }
+    // Redirect back to admin payments page
+    header("Location: " . BASE_URL . "/Public/index.php?page=admin-payments");
+    exit;
+}
 }

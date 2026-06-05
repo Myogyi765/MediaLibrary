@@ -33,6 +33,8 @@ use App\Core\GlobalExceptionHandler;
 define('BASE_PATH', dirname(__DIR__));
 
 require_once BASE_PATH . '/vendor/autoload.php';
+require_once BASE_PATH . '/vendor/stripe-php/init.php';
+
 GlobalExceptionHandler::register();
 use Dotenv\Dotenv;
 

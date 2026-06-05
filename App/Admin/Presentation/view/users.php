@@ -1,4 +1,10 @@
 <style>
+
+    body {
+    background: #d8d1ce;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .page-title {
    margin-bottom: 25px;
     padding-bottom: 10px;
@@ -20,11 +26,12 @@
     border-radius: 6px;
     font-weight: 600;
     transition: 0.3s;
+    margin-bottom: 20px;
 }
 
 
 .table-container {
-    background: #fff;
+    background: #bdc8c8;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);

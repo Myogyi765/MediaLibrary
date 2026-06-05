@@ -3,49 +3,63 @@
 namespace App\Catalog\Presentation\Controller;
 
 use App\Catalog\Domain\Service\CatalogService;
+use App\Borrow\Infrastructure\Persistence\BorrowRepository;
+use App\Payment\Domain\Repository\PaymentRepositoryInterface;
 
-/**
- * Handles displaying detailed information
- * for a single catalog item.
- */
 class DetailsController
 {
     private CatalogService $catalogService;
+    private BorrowRepository $borrowRepository;
+    private PaymentRepositoryInterface $paymentRepository;
 
-    public function __construct(CatalogService $catalogService)
-    {
-        // Inject catalog service dependency
-        $this->catalogService = $catalogService;
+    public function __construct(
+        CatalogService $catalogService,
+        BorrowRepository $borrowRepository,
+        PaymentRepositoryInterface $paymentRepository
+    ) {
+        $this->catalogService   = $catalogService;
+        $this->borrowRepository  = $borrowRepository;
+        $this->paymentRepository = $paymentRepository;
     }
 
+public function show()
+{
+    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-    
-    // Show item details page
-    public function show()
-    {
-        // Validate item ID from URL
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-        // Redirect if ID is invalid
-        if (!$id) {
-            header('Location: ' . BASE_URL . '/Public/index.php?page=catalog');
-            exit;
-        }
-
-        // Get item data from service
-        $item = $this->catalogService->singleItemArray($id);
-
-        // Redirect if item does not exist
-        if (empty($item)) {
-            header('Location: ' . BASE_URL . '/Public/index.php?page=catalog');
-            exit;
-        }
-
-        // Page information
-        $pageTitle = $item['title'];
-        $section = $item['category'];
-
-        // Load details view
-        require BASE_PATH . '/view/details.php';
+    if (!$id) {
+        header('Location: ' . BASE_URL . '/Public/index.php?page=catalog');
+        exit;
     }
+
+    $item = $this->catalogService->singleItemArray($id);
+
+    if (!$item) {
+        header('Location: ' . BASE_URL . '/Public/index.php?page=catalog');
+        exit;
+    }
+
+    $userId = $_SESSION['user']['user_id'] ?? null;
+    $borrow = null;
+
+    if ($userId) {
+        $borrow = $this->borrowRepository->findByUserAndMedia($userId, $id);
+
+        if ($borrow) {
+            $payment = $this->paymentRepository->findByBorrowIdWithTitle((int) $borrow['borrow_id']);
+
+       
+            $borrow['payment'] = $payment ?: [
+    'title' => $item['title'] ?? 'Unknown',
+    'status' => null
+];
+        }
+    }
+     
+
+
+    $section = $item['category'] ?? 'details';
+    $pageTitle = $item['title'] ?? 'Details';
+
+    require BASE_PATH . '/view/details.php';
+}
 }

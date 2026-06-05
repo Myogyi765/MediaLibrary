@@ -2,7 +2,7 @@
 
     /* Page */
 body {
-    background: #f4f6f9;
+    background: #d8d1ce;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -28,7 +28,7 @@ body {
 
 /* Container */
 .table-container {
-    background: #fff;
+    background: #d0d8da;
     border-radius: 18px;
     padding: 25px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
@@ -58,7 +58,8 @@ body {
 /* Body */
 .borrow-table td {
     padding: 16px;
-    color: #4a5568;
+    color: #35373c;
+    font-weight: 400;
 }
 
 .borrow-table tbody tr {
@@ -71,10 +72,7 @@ body {
     transform: scale(1.01);
 }
 
-/* Alternate Rows */
-.borrow-table tbody tr:nth-child(even) {
-    background: #fafafa;
-}
+
 
 /* Status Badge */
 .status {
@@ -85,7 +83,18 @@ body {
     font-weight: 700;
     text-transform: uppercase;
 }
+.back-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #3920c6;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-bottom: 20px;
 
+    transition: 0.3s;
+}
 .pending {
     background: #fff3cd;
     color: #856404;

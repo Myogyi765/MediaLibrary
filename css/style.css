@@ -80,6 +80,8 @@ a img {
 }
 
 .header .wrapper {
+  width: 100%;
+  max-width: 1200px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -96,7 +98,7 @@ a img {
 }
 
 /* =========================
-   NAVIGATION
+   NAVIGATION & DROPDOWN FIXES
    ========================= */
 
 .nav {
@@ -105,6 +107,7 @@ a img {
   margin: 0;
   padding: 0;
   gap: 20px;
+  align-items: center; /* Align items correctly inside flex wrapper */
 }
 
 .nav li {
@@ -139,6 +142,34 @@ a img {
   text-decoration-thickness: 2px;
   text-underline-offset: 6px;
 }
+
+/* 👇 BOOTSTRAP DROPDOWN FLOATING ALIGNMENT FIXES 👇 */
+.style-notif-container {
+  position: relative !important; /* Context anchor point for the flying absolute block menu */
+}
+
+.style-notif-container .dropdown-toggle::after {
+  display: none !important; /* Cleans up and removes unwanted secondary Bootstrap down arrows */
+}
+
+.notification-dropdown-list {
+  z-index: 99999 !important; /* Force menu above search boxes and banners */
+  position: absolute !important;
+  margin-top: 10px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 8px !important;
+  background-color: #ffffff !important;
+}
+
+/* Ensure child text flows naturally inside custom drop menus */
+.notification-dropdown-list .dropdown-item {
+  transition: background-color 0.2s ease;
+}
+
+.notification-dropdown-list .dropdown-item:hover {
+  background-color: #fff3f3 !important; /* Soft interactive tint color */
+}
+/* 👆 DROPDOWN ALIGNMENT FIXES END 👆 */
 
 /* =========================
    CONTENT / CATALOG
@@ -201,9 +232,6 @@ a img {
 
 .media-details {
   flex: 1;
-}
-
-.media-details {
   float: left;
   width: 57%;
   margin-left: 3%;
@@ -369,11 +397,13 @@ a img {
   padding-right: 3px;
   text-align: center;
 }
+
 .footer a {
   text-decoration: none;
   color: #539def;
   margin: 0 10px;
 }
+
 .footer a:hover,
 .footer a:active {
   text-decoration: underline;
@@ -384,7 +414,7 @@ a img {
    ========================= */
 
 .search {
-  background: #f5f5f5; /* NOT pink */
+  background: #f5f5f5;
   padding: 10px 0;
   border-bottom: 1px solid #ddd;
 }
@@ -412,18 +442,18 @@ a img {
 }
 
 .borrow-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: #ef7d7d;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #ef7d7d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .borrow-btn:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 .search input[type="submit"] {
@@ -435,4 +465,80 @@ a img {
   font-weight: bold;
   border-radius: 3px;
   cursor: pointer;
+}
+
+
+.notification-bell-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.bell-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+}
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e53e3e;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: bold;
+}
+.dropdown-box {
+  position: absolute;
+  right: 0;
+  top: 35px;
+  width: 300px;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  z-index: 1000;
+}
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  background: #f7fafc;
+}
+#noti-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+#noti-list li {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+/* Library Notification Contextual Backgrounds */
+.noti-overdue { background-color: #fff5f5; color: #c53030; }
+.noti-pickup_ready { background-color: #f0fff4; color: #22543d; }
+.hidden { display: none; }
+
+.login-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #ef7d7d, #ff9a9a);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 125, 125, 0.25);
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(239, 125, 125, 0.35);
 }
