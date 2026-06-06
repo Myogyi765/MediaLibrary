@@ -259,19 +259,8 @@ class PaymentRepository implements PaymentRepositoryInterface
             UPDATE borrows SET status='borrowed' WHERE borrow_id=?
         ")->execute([$borrowId]);
 
-        // Trigger Notification Model Engine payload injection safely
-        $notificationPath = BASE_PATH . '/App/Notification/Model/NotificationModel.php';
-        if (file_exists($notificationPath)) {
-            require_once $notificationPath;
-            $notificationModel = new \NotificationModel($this->db);
-
-            $notificationModel->create(
-                $userId,
-                "Payment Approved 🎉",
-                "Your payment of $" . number_format($amountValue, 2) . " for Borrow Reference #" . $borrowId . " has been approved.",
-                "payment"
-            );
-        }
+       
+        
     }
 
     public function findByIdWithDetails(int $paymentId): ?array

@@ -1,12 +1,11 @@
 <style>
-
-    /* Page */
+/* Page Layout styles */
 body {
     background: #d8d1ce;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Title */
+/* Page Title Headers */
 .page-title {
     text-align: center;
     margin-bottom: 30px;
@@ -26,7 +25,7 @@ body {
     border-radius: 50px;
 }
 
-/* Container */
+/* Master Layout Grid Container */
 .table-container {
     background: #d0d8da;
     border-radius: 18px;
@@ -35,13 +34,13 @@ body {
     overflow-x: auto;
 }
 
-/* Table */
+/* Data Tables */
 .borrow-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/* Header */
+/* Header Columns */
 .borrow-table thead {
     background: linear-gradient(135deg, #ef7d7d, #ff9a9a);
     color: white;
@@ -55,7 +54,7 @@ body {
     font-weight: 600;
 }
 
-/* Body */
+/* Body Content Rows */
 .borrow-table td {
     padding: 16px;
     color: #35373c;
@@ -72,9 +71,7 @@ body {
     transform: scale(1.01);
 }
 
-
-
-/* Status Badge */
+/* Status Badges */
 .status {
     display: inline-block;
     padding: 7px 15px;
@@ -92,7 +89,6 @@ body {
     border-radius: 6px;
     font-weight: 600;
     margin-bottom: 20px;
-
     transition: 0.3s;
 }
 .pending {
@@ -115,7 +111,7 @@ body {
     color: #0c5460;
 }
 
-/* Action Buttons */
+/* Operational Action Buttons */
 .action-btn {
     display: inline-block;
     padding: 10px 16px;
@@ -125,6 +121,8 @@ body {
     font-size: 13px;
     font-weight: 600;
     transition: 0.3s ease;
+    border: none;
+    cursor: pointer;
 }
 
 .approve-btn {
@@ -145,15 +143,14 @@ body {
     box-shadow: 0 5px 12px rgba(220,53,69,0.3);
 }
 
-/* Completed Status Text */
+/* Completed Inactive Elements Styling */
 .completed {
     color: #6c757d;
     font-weight: bold;
 }
 
-/* Mobile */
+/* Mobile Media Breakpoint Responsive Optimization */
 @media (max-width: 768px) {
-
     .page-title {
         font-size: 24px;
     }
@@ -176,94 +173,111 @@ body {
     Borrow Management
 </h2>
 <div class="text-center mt-4">
-    <a href="<?= BASE_URL ?>/Public/index.php?page=admin-dashboard"
-       class="back-btn">
+    <a href="<?= BASE_URL ?>/Public/index.php?page=admin-dashboard" class="back-btn">
         ← Back to Dashboard
     </a>
 </div>
+
 <div class="table-container">
-
-<table class="borrow-table">
-
-<thead>
-<tr>
-    <th>ID</th>
-    <th>User</th>
-    <th>Media</th>
-    <th>Borrow Date</th>
-    <th>Return Date</th>
-    <th>Status</th>
-    <th>Action</th>
-</tr>
-</thead>
-
-<tbody>
-
-<?php if (!empty($borrows)): ?>
-
-<?php foreach ($borrows as $borrow): ?>
-
-<tr>
-
-<td><?= htmlspecialchars($borrow['borrow_id']) ?></td>
-
-<td><?= htmlspecialchars($borrow['username']) ?></td>
-
-<td><?= htmlspecialchars($borrow['title']) ?></td>
-
-<td><?= htmlspecialchars($borrow['borrow_date']) ?></td>
-
-<td>
-    <?= $borrow['return_date']
-        ? htmlspecialchars($borrow['return_date'])
-        : '-' ?>
-</td>
-
-<td>
-
-<span class="status <?= htmlspecialchars($borrow['status']) ?>">
-    <?= ucfirst(htmlspecialchars($borrow['status'])) ?>
-</span>
-
-</td>
-
-<td>
-
-<?php if ($borrow['status'] === 'pending'): ?>
-
-<a class="action-btn approve-btn"
-   href="<?= BASE_URL ?>/Public/index.php?page=approve-borrow&id=<?= $borrow['borrow_id'] ?>">
-    Approve
-</a>
-
-<a class="action-btn reject-btn"
-   href="<?= BASE_URL ?>/Public/index.php?page=reject-borrow&id=<?= $borrow['borrow_id'] ?>">
-    Reject
-</a>
-
-<?php else: ?>
-
-
-<?php endif; ?>
-
-</td>
-
-</tr>
-
-<?php endforeach; ?>
-
-<?php else: ?>
-
-<tr>
-    <td colspan="7" style="text-align:center">
-        No borrow records found.
-    </td>
-</tr>
-
-<?php endif; ?>
-
-</tbody>
-
-</table>
-
+    <table class="borrow-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Media Title</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($borrows)): ?>
+                <?php foreach ($borrows as $borrow): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($borrow['borrow_id']) ?></td>
+                        <td><?= htmlspecialchars($borrow['username']) ?></td>
+                        <td><?= htmlspecialchars($borrow['title']) ?></td>
+                        <td><?= htmlspecialchars($borrow['borrow_date']) ?></td>
+                        <td>
+                            <?= $borrow['return_date'] ? htmlspecialchars($borrow['return_date']) : '-' ?>
+                        </td>
+                        <td>
+                            <span class="status <?= htmlspecialchars($borrow['status']) ?>">
+                                <?= ucfirst(htmlspecialchars($borrow['status'])) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <?php if ($borrow['status'] === 'pending'): ?>
+                                <button class="action-btn approve-btn borrow-action-trigger" 
+                                        data-id="<?= $borrow['borrow_id'] ?>" 
+                                        data-user="<?= $borrow['user_id'] ?>" 
+                                        data-title="<?= htmlspecialchars($borrow['title']) ?>" 
+                                        data-status="approve"> Approve </button>
+                                        
+                                <button class="action-btn reject-btn borrow-action-trigger" 
+                                        data-id="<?= $borrow['borrow_id'] ?>" 
+                                        data-user="<?= $borrow['user_id'] ?>" 
+                                        data-title="<?= htmlspecialchars($borrow['title']) ?>" 
+                                        data-status="reject"> Reject </button>
+                            <?php else: ?>
+                                <span class="completed">Processed</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="7" style="text-align:center">
+                        No borrow records found.
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Intercept operational click routines
+    $('.borrow-action-trigger').on('click', function() {
+        let btn = $(this);
+        let borrowId = btn.data('id');
+        let targetUserId = btn.data('user');
+        let bookTitle = btn.data('title');
+        let actionType = btn.data('status');
+        
+        // Translated real-time user-facing notification strings
+        let customMessage = actionType === 'approve' 
+            ? "The administrator has approved your rental request for the book '" + bookTitle + "'."
+            : "The administrator has rejected your rental request for the book '" + bookTitle + "'.";
+
+        let targetUrl = actionType === 'approve' 
+            ? '<?= BASE_URL ?>/Public/index.php?page=approve-borrow&id=' + borrowId
+            : '<?= BASE_URL ?>/Public/index.php?page=reject-borrow&id=' + borrowId;
+
+        // Perform main operational request
+        $.ajax({
+            url: targetUrl,
+            type: 'GET',
+            success: function() {
+                // Post confirmation updates back down to the target user notification tray
+                $.ajax({
+                    url: '<?= BASE_URL ?>/Public/index.php?page=notification_api&action=send',
+                    type: 'POST',
+                    data: {
+                        sender_id: <?= (int)($_SESSION['user']['user_id'] ?? 1) ?>,
+                        receiver_id: targetUserId,
+                        message: customMessage
+                    },
+                    success: function() {
+                        alert('Action completed successfully and user has been notified.');
+                        location.reload();
+                    }
+                });
+            }
+        });
+    });
+});
+</script>

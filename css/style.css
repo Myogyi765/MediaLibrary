@@ -1,6 +1,6 @@
-/* =========================
+/* ==========================================================================
    RESET & BASE
-   ========================= */
+   ========================================================================== */
 
 * {
   box-sizing: border-box;
@@ -33,9 +33,9 @@ a img {
   outline: none;
 }
 
-/* =========================
+/* ==========================================================================
    LAYOUT
-   ========================= */
+   ========================================================================== */
 
 .page-container {
   min-height: 100vh;
@@ -70,9 +70,9 @@ a img {
   min-height: 60vh;
 }
 
-/* =========================
-   HEADER
-   ========================= */
+/* ==========================================================================
+   HEADER & NAVIGATION
+   ========================================================================== */
 
 .header {
   background: #ef7d7d;
@@ -90,6 +90,7 @@ a img {
 .logo {
   display: flex;
   align-items: center;
+  margin: 0;
 }
 
 .logo img {
@@ -97,23 +98,19 @@ a img {
   width: auto;
 }
 
-/* =========================
-   NAVIGATION & DROPDOWN FIXES
-   ========================= */
-
 .nav {
   list-style: none;
   display: flex;
   margin: 0;
   padding: 0;
   gap: 20px;
-  align-items: center; /* Align items correctly inside flex wrapper */
+  align-items: center;
 }
 
 .nav li {
   color: #fff;
   text-decoration: none;
-  margin-left: 30px;
+  margin-left: 10px;
   font-weight: bold;
   display: inline-flex;
   align-items: center;
@@ -143,37 +140,106 @@ a img {
   text-underline-offset: 6px;
 }
 
-/* 👇 BOOTSTRAP DROPDOWN FLOATING ALIGNMENT FIXES 👇 */
+/* ==========================================================================
+   NOTIFICATIONS SYSTEM & DROPDOWN ALIGNMENT
+   ========================================================================== */
+
 .style-notif-container {
-  position: relative !important; /* Context anchor point for the flying absolute block menu */
+  position: relative !important;
 }
 
 .style-notif-container .dropdown-toggle::after {
-  display: none !important; /* Cleans up and removes unwanted secondary Bootstrap down arrows */
+  display: none !important;
+}
+
+.style-notif-container .badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: #e53e3e;
+  color: white;
+  border-radius: 50%;
+  padding: 4px 7px;
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .notification-dropdown-list {
-  z-index: 99999 !important; /* Force menu above search boxes and banners */
+  z-index: 99999 !important;
   position: absolute !important;
-  margin-top: 10px !important;
+  margin-top: 12px !important;
   border: 1px solid #ddd !important;
   border-radius: 8px !important;
   background-color: #ffffff !important;
+  width: 300px !important;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Ensure child text flows naturally inside custom drop menus */
-.notification-dropdown-list .dropdown-item {
+.notification-dropdown-list .dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #eee !important;
+  background: #f7fafc;
+  color: #333;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+#dropdown-noti-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+#dropdown-noti-list li a {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #333;
+  display: block;
+  font-weight: normal;
+}
+
+#dropdown-noti-list li a:hover {
+  background-color: #fff3f3 !important;
+  text-decoration: none;
+}
+
+.user-display-tag {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-custom-warning {
+  background-color: #ffc107;
+  color: #212529;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
   transition: background-color 0.2s ease;
 }
 
-.notification-dropdown-list .dropdown-item:hover {
-  background-color: #fff3f3 !important; /* Soft interactive tint color */
+.btn-custom-warning:hover {
+  background-color: #e0a800;
 }
-/* 👆 DROPDOWN ALIGNMENT FIXES END 👆 */
 
-/* =========================
-   CONTENT / CATALOG
-   ========================= */
+/* Contextual backgrounds if needed dynamically via class assignment */
+.noti-overdue { background-color: #fff5f5; color: #c53030; }
+.noti-pickup_ready { background-color: #f0fff4; color: #22543d; }
+.hidden { display: none; }
+
+/* ==========================================================================
+   CATALOG COMPONENTS
+   ========================================================================== */
 
 .title {
   text-align: center;
@@ -207,9 +273,9 @@ a img {
   font-weight: bold;
 }
 
-/* =========================
+/* ==========================================================================
    MEDIA DETAILS
-   ========================= */
+   ========================================================================== */
 
 .media-container {
   max-width: 1000px;
@@ -255,9 +321,24 @@ a img {
   font-weight: bold;
 }
 
-/* =========================
+.borrow-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #ef7d7d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.borrow-btn:hover {
+  opacity: 0.9;
+}
+
+/* ==========================================================================
    BREADCRUMBS
-   ========================= */
+   ========================================================================== */
 
 .breadcrumbs {
   font-size: 14px;
@@ -281,9 +362,9 @@ a img {
   font-weight: bold;
 }
 
-/* =========================
-   FORMS
-   ========================= */
+/* ==========================================================================
+   FORMS & AUTH BUTTONS
+   ========================================================================== */
 
 .suggest-form {
   max-width: 500px;
@@ -344,9 +425,29 @@ a img {
   border-radius: 4px;
 }
 
-/* =========================
+.login-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ef7d7d, #ff9a9a);
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 125, 125, 0.25);
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(239, 125, 125, 0.35);
+  text-decoration: none !important;
+}
+
+/* ==========================================================================
    PAGINATION
-   ========================= */
+   ========================================================================== */
 
 .pagination {
   margin: 40px 0;
@@ -380,38 +481,9 @@ a img {
   cursor: default;
 }
 
-/* =========================
-   FOOTER
-   ========================= */
-
-.footer {
-  background: #f0eeed;
-  border-top: 3px solid #dddddd;
-  padding: 12px 0;
-  font-size: 12px;
-  color: #a5a5a5;
-}
-
-.footer p {
-  margin: 0;
-  padding-right: 3px;
-  text-align: center;
-}
-
-.footer a {
-  text-decoration: none;
-  color: #539def;
-  margin: 0 10px;
-}
-
-.footer a:hover,
-.footer a:active {
-  text-decoration: underline;
-}
-
-/* =========================
-   SEARCH BAR (BELOW HEADER)
-   ========================= */
+/* ==========================================================================
+   SEARCH BAR
+   ========================================================================== */
 
 .search {
   background: #f5f5f5;
@@ -441,21 +513,6 @@ a img {
   border-radius: 3px;
 }
 
-.borrow-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #ef7d7d;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.borrow-btn:hover {
-  opacity: 0.9;
-}
-
 .search input[type="submit"] {
   margin-left: 6px;
   padding: 6px 10px;
@@ -467,78 +524,31 @@ a img {
   cursor: pointer;
 }
 
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
 
-.notification-bell-wrapper {
-  position: relative;
-  display: inline-block;
+.footer {
+  background: #f0eeed;
+  border-top: 3px solid #dddddd;
+  padding: 12px 0;
+  font-size: 12px;
+  color: #a5a5a5;
 }
-.bell-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  position: relative;
-}
-.badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: #e53e3e;
-  color: white;
-  border-radius: 50%;
-  padding: 3px 7px;
-  font-size: 11px;
-  font-weight: bold;
-}
-.dropdown-box {
-  position: absolute;
-  right: 0;
-  top: 35px;
-  width: 300px;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-  border-radius: 6px;
-  z-index: 1000;
-}
-.dropdown-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  background: #f7fafc;
-}
-#noti-list {
-  list-style: none;
-  padding: 0;
+
+.footer p {
   margin: 0;
-  max-height: 250px;
-  overflow-y: auto;
+  padding-right: 3px;
+  text-align: center;
 }
-#noti-list li {
-  padding: 12px;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 13px;
-}
-/* Library Notification Contextual Backgrounds */
-.noti-overdue { background-color: #fff5f5; color: #c53030; }
-.noti-pickup_ready { background-color: #f0fff4; color: #22543d; }
-.hidden { display: none; }
 
-.login-btn {
-  display: inline-block;
-  padding: 10px 18px;
-  background: linear-gradient(135deg, #ef7d7d, #ff9a9a);
-  color: #fff;
+.footer a {
   text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(239, 125, 125, 0.25);
+  color: #539def;
+  margin: 0 10px;
 }
 
-.login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(239, 125, 125, 0.35);
+.footer a:hover,
+.footer a:active {
+  text-decoration: underline;
 }

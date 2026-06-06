@@ -39,7 +39,7 @@ class PaymentController
         $borrowId = $_GET['borrow_id'] ?? null;
 
         if (!$borrowId) {
-            die("Borrow ID missing");
+            die("Borrow ID is missing.");
         }
 
         $payment = $this->service->findByBorrowIdWithTitle((int)$borrowId);
@@ -62,7 +62,7 @@ class PaymentController
         $borrowId = $_GET['borrow_id'] ?? null;
 
         if (!$borrowId) {
-            die("Borrow ID missing");
+            die("Borrow ID is missing.");
         }
 
         $payment = $this->service->findByBorrowIdWithTitle((int)$borrowId);
@@ -106,48 +106,66 @@ class PaymentController
         }
 
         if (!isset($_FILES['proof']) || $_FILES['proof']['error'] !== UPLOAD_ERR_OK) {
-            die("No valid file uploaded");
+            die("No valid file uploaded.");
         }
 
         $borrowId = (int)($_POST['borrow_id'] ?? 0);
 
-        // ✅ safe upload folder
+        // ✅ Safe upload folder configuration
         $uploadDir = BASE_PATH . '/uploads/';
 
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
-            }
-
-            // secure filename
-            $fileName = time() . '_' . basename($_FILES['proof']['name']);
-            $uploadPath = $uploadDir . $fileName;
-
-            if (!move_uploaded_file($_FILES['proof']['tmp_name'], $uploadPath)) {
-                die("Upload failed");
-            }
-
-            // ✅ UseCase layer (clean DDD)
-            $useCase = new UploadPaymentProof($this->service);
-            $useCase->execute($borrowId, $fileName);
-
-        header('Location: ?page=borrow-detail&id=' . urlencode($borrowId));
-        exit;
         }
 
- public function invoice()
-{
-    $paymentId = (int)($_GET['payment_id'] ?? 0);
+        // Secure filename formatting
+        $fileName = time() . '_' . basename($_FILES['proof']['name']);
+        $uploadPath = $uploadDir . $fileName;
 
-    if (!$paymentId) {
-        die("Payment ID missing");
+        if (!move_uploaded_file($_FILES['proof']['tmp_name'], $uploadPath)) {
+            die("File upload operation failed.");
+        }
+
+        // ✅ UseCase implementation layer (Clean DDD architecture alignment)
+        $useCase = new UploadPaymentProof($this->service);
+        $useCase->execute($borrowId, $fileName);
+
+        // Fetch application database engine instance
+        $db = \App\DB\Database::getConnection();
+        $notifModel = new \App\Notification\Repository\NotificationRepository($db);
+        
+        $currentUsername = $_SESSION['user']['username'];
+        $currentUserId = (int)$_SESSION['user']['user_id'];
+        $adminUserId = 1; // Admin account ID should be configured centrally if possible
+        
+        // One clear admin notification for proof submission
+        $msgText = "User '{$currentUsername}' has submitted payment proof for Borrow ID #{$borrowId}.";
+        $notifModel->createNotification($currentUserId, $adminUserId, $msgText);
+
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success']);
+            exit;
+        }
+
+        header('Location: ?page=borrow-detail&id=' . urlencode((string)$borrowId));
+        exit;
     }
 
-    $payment = $this->service->findInvoiceData($paymentId);
+    public function invoice()
+    {
+        $paymentId = (int)($_GET['payment_id'] ?? 0);
 
-    if (!$payment) {
-        die("Invoice not found");
+        if (!$paymentId) {
+            die("Payment ID is missing.");
+        }
+
+        $payment = $this->service->findInvoiceData($paymentId);
+
+        if (!$payment) {
+            die("Requested invoice records could not be found.");
+        }
+
+        require BASE_PATH . '/App/Payment/Presentation/View/invoice.php';
     }
-
-    require BASE_PATH . '/App/Payment/Presentation/View/invoice.php';
-}
 }

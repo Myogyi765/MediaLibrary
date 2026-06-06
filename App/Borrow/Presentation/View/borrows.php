@@ -230,6 +230,23 @@ body {
     box-shadow: 0 10px 20px rgba(255,123,0,0.35);
 }
 
+.invoice-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: #f8f9fc;
+    color: #2c3e50;
+    border: 1px solid #d1d8de;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.invoice-link:hover {
+    background: #e2e6ea;
+}
+
 /* =========================
    EMPTY STATE
 ========================= */
@@ -311,11 +328,16 @@ body {
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if ($status === 'approved' && $paymentStatus !== 'paid'): ?>
-                            <a class="action-btn pay-btn" href="<?= BASE_URL ?>/Public/index.php?page=payment&borrow_id=<?= $borrowId ?>">Pay Now</a>
+                        <?php if ($paymentStatus === 'paid'): ?>
+                            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                                <a class="action-btn return-btn" href="<?= BASE_URL ?>/Public/index.php?page=return-book&id=<?= $borrowId ?>">Return</a>
+                                <?php if (!empty($borrow['payment']['payment_id'])): ?>
+                                    <a class="action-btn invoice-link" href="<?= BASE_URL ?>/Public/index.php?page=invoice&payment_id=<?= $borrow['payment']['payment_id'] ?>" target="_blank">Download Invoice</a>
+                                <?php endif; ?>
+                            </div>
 
-                        <?php elseif ($status === 'approved' && $paymentStatus === 'paid'): ?>
-                            <a class="action-btn return-btn" href="<?= BASE_URL ?>/Public/index.php?page=return-book&id=<?= $borrowId ?>">Return</a>
+                        <?php elseif (($status === 'approved' || $status === 'borrowed') && $paymentStatus !== 'paid'): ?>
+                            <a class="action-btn pay-btn" href="<?= BASE_URL ?>/Public/index.php?page=payment&borrow_id=<?= $borrowId ?>">Pay Now</a>
 
                         <?php elseif ($status === 'pending'): ?>
                             <span class="status pending">Waiting Admin approval</span>
