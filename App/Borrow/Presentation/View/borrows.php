@@ -328,7 +328,7 @@ body {
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if ($paymentStatus === 'paid'): ?>
+                    <?php if ($status === 'approved' && $paymentStatus === 'paid'): ?>
                             <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
                                 <a class="action-btn return-btn" href="<?= BASE_URL ?>/Public/index.php?page=return-book&id=<?= $borrowId ?>">Return</a>
                                 <?php if (!empty($borrow['payment']['payment_id'])): ?>

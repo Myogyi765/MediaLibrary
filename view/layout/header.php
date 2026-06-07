@@ -157,6 +157,26 @@ $section   = $section ?? '';
             </div>
         </header>
 
+          <?php if (empty($hideSearch)) : ?>
+            <div class="search">
+                <div class="wrapper">
+                    <form method="GET" action="<?= BASE_URL ?>/Public/index.php">
+                        <input type="hidden" name="page" value="catalog">
+
+                        <?php if (!empty($section)) : ?>
+                            <input type="hidden" name="cat" value="<?= htmlspecialchars($section) ?>">
+                        <?php endif; ?>
+
+                        <label for="s">Search:</label>
+                        <input type="text" name="s" id="s" value="<?= htmlspecialchars($_GET['s'] ?? '') ?>" placeholder="Search books, movies, music...">
+                        <input type="submit" value="Go">
+                    </form>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <main id="content"></main>
+
         <div class="wrapper mt-3">
             <div id="notification-alert" class="alert alert-success alert-dismissible fade show" style="display:none;" role="alert">
                 <strong>Notification: </strong> <span id="notification-message"></span>

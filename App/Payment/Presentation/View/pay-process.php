@@ -50,12 +50,15 @@ input[type="file"] { width: 100%; padding: 10px; margin-top: 10px; }
 
     <div id="wave" class="qr-box" style="display:none;">
         <p><b>WavePay QR Payment</b></p>
-        <img src="<?= BASE_URL ?>/img/wave-qr.png" alt="Wave QR">
+        <img src="<?= BASE_URL ?>/alf.png" alt="Wave QR">
         <div class="phone">📱 Phone: 09-123456789</div>
     </div>
 
     <div class="upload-box">
-        <form id="proofForm" enctype="multipart/form-data">
+       <form id="proofForm"
+      method="POST"
+      action="<?= BASE_URL ?>/Public/index.php?page=upload-proof"
+      enctype="multipart/form-data">
             <input type="hidden" name="borrow_id" value="<?= $b_id ?>">
 
             <label><b>Upload Payment Screenshot</b></label>

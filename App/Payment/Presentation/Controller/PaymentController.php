@@ -148,7 +148,7 @@ class PaymentController
             exit;
         }
 
-        header('Location: ?page=borrow-detail&id=' . urlencode((string)$borrowId));
+        header('Location: ?page=borrow-detail&id=' . $borrowId);
         exit;
     }
 
